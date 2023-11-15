@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PassWord Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel&family=Varela+Round&display=swap');
+
+body{
+  background:linear-gradient(white,lightblue,blue);
+  text-align:center;
+}
+#intro{
+  
+  font-size:1.5rem;
+}
+h1{
+  color:red;
+  background-color:black;
+  border:3px solid red;
+  border-radius:1rem;
+  font-family:"Varela Round", sans-serif;
+  font-style: italic;
+  font-size:5vw
+}
+main{
+  width:80%;
+  margin:auto;
+}
+#hint{
+  font-size:1.5rem;
+  color:white
+}
+#note{
+  background-color: black;
+  color:red;
+  font-size:1.5rem;
+}
+input.letter-input{
+  color:black;
+  width:calc(80%/5);
+  text-align:center;
+  font-size:4vw;
+  background-color: lightgrey;
+/* h-offset, v-offset, blur, spread radius, rgba()   */
+  box-shadow:5px 9px 5px .5px rgba(0,0,0,.5);
+  margin:.5vw;
+}
+table{
+  padding-top:1rem;
+  width:80%;
+  margin:auto;
+  text-align:center;
+  font-size:4vw;
+}
+th, td{
+  
+  border:1px solid black;
+  vertical-align:top;
+}
+
+#wrong-op{
+  display:none;
+}
+
+#right-op{
+  display:none;
+}
+
+#winning-op{
+  display:none;
+}
+
+#winning-op img{
+  animation: winop infinite ease-in-out;
+}
+
+#winning-op p{
+  font-size: 2rem;
+  color: blue;  
+}
+
+#wrong-op img{
+  animation:wrongop 1s linear
+}
+#wrong-op p{
+  color:red;
+  font-size:2rem
+}
+#right-op img{
+  animation:rightop 1s linear
+}
+#right-op p{
+  color:lightgreen;
+  font-size:2rem;
+}
+
+@keyframes rightop{
+  0%{
+    transform:scale(0);
+  }
+  50%{
+    transform:scale(2);
+  }
+  100%{
+    transform:scale(1);
+  }
+}
+
+@keyframes wrongop{
+  0%{
+    transform:rotate(0);
+  }
+  25%{
+    transform:rotate(90deg);
+  }
+  75%{
+    transform:rotate(-90deg);
+  }
+  100%{
+    transform:rotate(0deg);
+  }
+}
+
+@keyframes winop{
+  0%{
+    transform:scale(0);
+  }
+  50%{
+    transform:scale(2);
+  }
+  100%{
+    transform: scale(1);
+  }
+}
+
+    </style>
+</head>
+<body>
+
+    <main>
+<h1>Welcome to Password Game!</h1>
+    <p id = "intro">WELCOME TO THE PASSWORD GAME, try to guess the password below, a hint will be provided to you. Get a letter correct, continue. Guess wrong, then try again, and your guess will be recorded</p>
+<div id="mystery-box">
+  <img src="https://i.redd.it/5unqv87oj8y91.gif" alt="" width=150 height=150>
+</div>
+    <div id="hint">
+      <p>Hint: This person is famous in VideoGames and is the face of Nintendo</p>
+    </div>
+    <div id = "note">
+      <p>NOTE: Enter your answer in CAPITAL letters</p>
+    </div>
+<form id = "password-form"></form>
+    
+    <div id = "wrong-op">
+      <p>WRONG! Try Again</p>
+      <img src="https://media.tenor.com/vKpmpKI8q8QAAAAM/super-mario-world-panicking.gif" alt="" width = "200" height = "200">
+    </div>
+    
+    <div id = "right-op">
+      <p> CORRECT!</p>
+      <img src="https://media.tenor.com/pTqDD5znWfcAAAAM/mario-thumbs-up.gif" alt="">
+    </div>
+    
+    <div id = "winning-op">
+      <p> Congrats, Mario is indeed the answer! Thank you for playing, WAHOO!</p>
+      <img src="https://64.media.tumblr.com/cfc889b37729a964c14e733a1b9acb51/tumblr_n2jz4pKOJC1rrftcdo1_500.gif" alt="">
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+        <th>Wrong:</th>
+        <th>Wrong:</th>
+        <th>Wrong:</th>
+        <th>Wrong:</th>
+        <th>Wrong:</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id = "td0">X</td>
+          <td id = "td1">X</td>
+          <td id = "td2">X</td>
+          <td id = "td3">X</td>
+          <td id = "td4">X</td>
+        </tr>
+      </tbody>
+    </table>
+    
+  </main>
+
+    <script>
+const rightOp = document.getElementById("right-op");
+const wrongOp = document.getElementById("wrong-op");
+const passwordForm = document.querySelector("#password-form");
+const winningOp = document.getElementById("winning-op");
+//initialize game variables
+let phrase = "MARIO";
+let index = 0;
+
+for (let char of phrase) {
+  // console.log(char);
+  // console.log(index);
+  const letterInput = document.createElement("input");
+  letterInput.type = "text";
+  letterInput.classList.add("letter-input");
+  letterInput.maxLength = "1";
+  letterInput.id = index.toString();
+  passwordForm.appendChild(letterInput);
+  index++;
+}
+
+const input1 = document.getElementById("0");
+
+const input2 = document.getElementById("1");
+
+const input3 = document.getElementById("2");
+
+const input4 = document.getElementById("3");
+
+const input5 = document.getElementById("4");
+
+let correctGuesses = 0;
+let incorrectGuesses = 0;
+
+passwordForm.addEventListener("change",function(event){
+  
+  const thisInput = event.target;
+  const guess = thisInput.value;
+  console.log(thisInput);
+  console.log(guess);
+  
+  if(guess === phrase[parseInt(thisInput.id)]){
+    thisInput.disabled = true;
+    thisInput.placeholder = guess;
+    console.log("CORRECT");
+    thisInput.style.backgroundColor = "green";
+    rightOp.style.display = "block";
+    wrongOp.style.display = "none";
+    correctGuesses++;
+  }
+  else{
+    rightOp.style.display = "none";
+    wrongOp.style.display = "block";
+    thisInput.style.backgroundColor = "red";
+    console.log("WRONG!");
+    incorrectGuesses++;
+    document.getElementById(`td${thisInput.id}`).innerHTML += "<br>" + guess;
+    thisInput.value = "";
+  }
+  if (correctGuesses == 5){
+    rightOp.style.display = "none"
+    winningOp.style.display = "block"
+  }
+  
+})
+
+
+    </script>
+</body>
+</html>
